@@ -1,0 +1,44 @@
+<!doctype html>
+<html>
+<head>
+<title>Node Playground</title>
+<link rel="stylesheet" href="site.css">
+<link rel="Stylesheet" href="https://cdn.datatables.net/1.10.24/css/jquery.dataTables.min.css"/>
+</head>
+<body>
+<header>tomyoungs - elanco interview task</header>
+<div id="mainContent">
+    <button id="startDataProcessing" onclick="StartDataProcessing();" name="Start">Let's start</button>
+    <div id=validationErrors></div>
+    <Section id="dataSummary" >
+        <h2 >DataSummary</h2>
+        <div id="dataSummaryText"></div>
+        <div id="dataApplicationText"></div>
+        <div id="dataResourceText"></div>
+        <div id="dataResourceLocationText"></div>
+    </Section>
+        
+    <Section id="dataSummaryApp" >
+        <h2 >Analysis by Application</h2>
+        <div id = "summarySectionAppCost"></div> 
+    </Section>
+    <Section id="dataSummaryRes" >
+        <h2 >Analysis by Resource</h2>
+        <div id = "summarySectionResCost"></div> 
+    </Section>
+    <Section id="dataSummaryLoc" >
+        <h2 >Analysis by Location</h2>
+        <div id = "summarySectionLocCost"></div> 
+    </Section>
+
+    <canvas id=locationMap></canvas>
+</div>
+<footer></footer>
+<script src="site.js" type="text/javascript"></script>
+<script src="https://unpkg.com/axios/dist/axios.min.js"></script>
+
+
+<script type="text/javascript" src="https://code.jquery.com/jquery-3.5.1.js"></script>
+<script type="text/javascript" src="https://cdn.datatables.net/1.10.24/js/jquery.dataTables.min.js"></script> 
+</body>
+</html>
