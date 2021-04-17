@@ -51,8 +51,7 @@ function StartDataProcessing(){
       
         //Write Data Summary
         const element = document.getElementById('dataSummaryText');
-
-        var output = "Data Summary for Elanco "+ summaryData.minDate +" - " + summaryData.maxDate;//todo: format time out
+        var output = "Data Summary for Elanco between '"+ summaryData.minDate.toDateString() +" - " + summaryData.maxDate.toDateString() + "'";
         var textNode = document.createTextNode(output);
         element.appendChild(textNode);
         element.appendChild(document.createElement('br'));
@@ -81,7 +80,7 @@ function StartDataProcessing(){
         var tblasHTML = makeTable("tblLocCost", "Location",  locListArr, "Cost", databyLocCost);    
         document.getElementById('summarySectionLocCost').appendChild(tblasHTML);
 
-        // transform tables into datatables to allow filtering and sorting and other useful stuff
+        // transform tables into datatables to allow filtering and sorting and other useful stuff, basically makes it look fancy
         $('#tblAppCost').DataTable({
             "order": [[ 1, "desc" ]]//descending on cost column
         } );
@@ -99,9 +98,10 @@ function ProcessRawItem(item){
     summaryData.totalNumRecords ++;
     console.log(rawData.length);
     //bit painful- looks like date in the data is in format DD/MM/YYYY need to extract the parts
-    // and create the correct date object - also remember js counts months from 0:
+    // and create the correct date object - also remember js counts months from 0 so you need a "-1" to make it correct:
     var parts =item.Date.split('/');
     var thedate = new Date(parts[2], parts[1] - 1, parts[0]);
+    
     if ( isEarlier(thedate, summaryData.minDate)){//keeps track of the earliest and latest date
         summaryData.minDate=thedate;
     } 
@@ -109,22 +109,14 @@ function ProcessRawItem(item){
         summaryData.maxDate=thedate;
     } 
 
-    //if (validateData(item)) {
         var appIndex=appListArr.indexOf(item.ResourceGroup)
         databyAppCost[appIndex] += Number(item.Cost);
-        //if (!Number(item.consumedQuantity).isNaN){
-           // databyAppConsumed[appIndex] += Number(item.consumedQuantity);
-        //} //otherwise too small to count 
 
         var resIndex=resListArr.indexOf(item.MeterCategory)
         databyResCost[resIndex] += Number(item.Cost);
-        //if (!Number(item.consumedQuantity).isNaN){
-            //databyResConsumed[resIndex] += Number(item.consumedQuantity);
-        //} //otherwise too small to count 
         
         var locIndex = locListArr.indexOf(item.ResourceLocation)
         databyLocCost[locIndex] += Number(item.Cost);
-    //}
 }
 
 function DisplayAppMasterlist(){
@@ -164,10 +156,8 @@ function DisplayResLocationMasterlist(){
     return true;
 }*/
 
-
 function isLater(thedate, currentminDate)
 {
-
     return thedate > currentminDate;
 }
 function isEarlier(thedate, currentmaxDate)
