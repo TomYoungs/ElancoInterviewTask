@@ -4,14 +4,12 @@ var resourceList;
 
 var appListArr;
 var resListArr;
-var locListArr =[];
+var locArr=[];
 
 // Investigate data totals by application (Resource group)
 var databyAppCost;
-var databyAppConsumed;  
 // Investigate data totals by resource
 var databyResCost;
-var databyResConsumed;
 // Investigate data totals by location
 var databyLocCost;
 
@@ -35,6 +33,8 @@ function StartDataProcessing(){
         //Resource master list
         resListArr = await axios('https://engineering-task.elancoapps.com/api/resources').then(resp => resp.data);
         
+        //because there is no api for locations this function just finds all the unique location instances
+        rawData.forEach(item => locationsInstance(item));
     
         //set up the storage arrays
         databyAppCost= new Array(appListArr.length).fill(0);
@@ -43,12 +43,12 @@ function StartDataProcessing(){
         //databyResConsumed= new Array(resListArr.length).fill(0);
 
         //dont have the location list at this point - assuming it doesnt change
-        databyLocCost= new Array(10).fill(0);
+        databyLocCost= new Array(resListArr.length).fill(0);
 
 
         //Raw Data processing
         rawData.forEach(item => ProcessRawItem(item));
-      
+        console.log(databyLocCost);
         //Write Data Summary
         const element = document.getElementById('dataSummaryText');
         var output = "Data Summary for Elanco between '"+ summaryData.minDate.toDateString() +" - " + summaryData.maxDate.toDateString() + "'";
@@ -77,7 +77,7 @@ function StartDataProcessing(){
         document.getElementById('summarySectionResCost').appendChild(tblasHTML);
 
         //Write Location tables
-        var tblasHTML = makeTable("tblLocCost", "Location",  locListArr, "Cost", databyLocCost);    
+        var tblasHTML = makeTable("tblLocCost", "Location",  locArr, "Cost", databyLocCost);    
         document.getElementById('summarySectionLocCost').appendChild(tblasHTML);
 
         // transform tables into datatables to allow filtering and sorting and other useful stuff, basically makes it look fancy
@@ -93,10 +93,14 @@ function StartDataProcessing(){
 
     })()
 }
+function locationsInstance(item){;
+    if(!(locArr.includes(item.ResourceLocation)))
+        locArr.push(item.ResourceLocation)
+}
 
 function ProcessRawItem(item){
     summaryData.totalNumRecords ++;
-    console.log(rawData.length);
+    //console.log(rawData.length);
     //bit painful- looks like date in the data is in format DD/MM/YYYY need to extract the parts
     // and create the correct date object - also remember js counts months from 0 so you need a "-1" to make it correct:
     var parts =item.Date.split('/');
@@ -115,7 +119,7 @@ function ProcessRawItem(item){
         var resIndex=resListArr.indexOf(item.MeterCategory)
         databyResCost[resIndex] += Number(item.Cost);
         
-        var locIndex = locListArr.indexOf(item.ResourceLocation)
+        var locIndex = locArr.indexOf(item.ResourceLocation)
         databyLocCost[locIndex] += Number(item.Cost);
 }
 
@@ -129,7 +133,7 @@ function DisplayResMasterlist(){
     document.getElementById('dataResourceText').innerHTML = restext;
 } 
 function DisplayResLocationMasterlist(){
-    var loctext = "RESOURCE LOCATIONS IN DATASET (" + locListArr.length  + " locations)" + '\r\n' + locListArr;
+    var loctext = "RESOURCE LOCATIONS IN DATASET (" + locArr.length  + " locations)" + '\r\n' + locArr;
     document.getElementById('dataResourceLocationText').innerHTML = loctext;
 }
 
